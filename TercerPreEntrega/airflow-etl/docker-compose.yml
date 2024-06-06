@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  airflow:
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - LOAD_EX=n
+      - EXECUTOR=LocalExecutor
+      - AIRFLOW__WEBSERVER__RBAC=True
+      - _AIRFLOW_WWW_USER_CREATE=True
+      - _AIRFLOW_WWW_USER_USERNAME=admin
+      - _AIRFLOW_WWW_USER_PASSWORD=admin
+    volumes:
+      - ./dags:/usr/local/airflow/dags
+    command: >
+      sh -c "airflow db init &&
+             airflow users create -r Admin -u admin -p admin -e admin@example.com -f admin -l user &&
+             airflow webserver & 
+             airflow scheduler"
